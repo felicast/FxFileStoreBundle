@@ -20,7 +20,7 @@ services:
         arguments:
             - %fx_file_store.mappings%
 
-    muchachos.filestore.twig.muchachos_file_storage:
+    fx_file_store.twig.fx_file_store:
         class: Felicast\Bundle\FxFileStoreBundle\Twig\FxFileStoreExtension
         arguments:
             - @fx_file_store.uploader
