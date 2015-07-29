@@ -1,0 +1,30 @@
+{
+    "name" : "felicast/FxFileStoreBundle",
+    "description" : "File store bundle for symfony 2 with doctrine",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Vadim (-FeLiX-) Seluyanov",
+        "email" : "felicast@mail.ru"
+    }],
+    "keywords" : [
+        "file symfony doctrine"
+    ],
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Felicast\\Bundle\\FxFileStoreBundle" : ""
+        }
+    },
+    "target-dir" : "Felicast/Bundle/FxFileStoreBundle",
+    "repositories" : [{
+    }],
+    "extra" : {
+    "branch-alias" : {
+            "dev-master" : "master"
+        }
+    }
+}
