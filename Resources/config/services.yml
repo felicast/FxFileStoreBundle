@@ -1,0 +1,28 @@
+parameters:
+    fx_file_store.mappings: []
+
+services:
+    fx_file_store.doctrine.uploadable_listener:
+        class: Felicast\Bundle\FxFileStoreBundle\Doctrine\ORM\EventListener\UploadableListener
+        arguments:
+            - @service_container
+            - @fx_file_store.uploader
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    fx_file_store.form.fx_file_type:
+        class: Felicast\Bundle\FxFileStoreBundle\Form\FxFileType
+        tags:
+            - { name: form.type, alias: fx_file }
+
+    fx_file_store.uploader:
+        class: Felicast\Bundle\FxFileStoreBundle\Service\Uploader
+        arguments:
+            - %fx_file_store.mappings%
+
+    muchachos.filestore.twig.muchachos_file_storage:
+        class: Felicast\Bundle\FxFileStoreBundle\Twig\FxFileStoreExtension
+        arguments:
+            - @fx_file_store.uploader
+        tags:
+            - { name: twig.extension }
