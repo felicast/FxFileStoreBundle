@@ -5,7 +5,7 @@ namespace Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File;
 
 use Symfony\Component\HttpFoundation\File\File;
 
-class FxFile
+class FxFile implements \JsonSerializable
 {
     /** @var File */
     private $file;
@@ -60,11 +60,18 @@ class FxFile
     /**
      * @return File
      */
+
     public function getFile()
     {
+        if ($this->file === null) {
+            $path = $this->getPath();
+            if ($path === null) {
+                throw new \RuntimeException('File path can not be null');
+            }
+            $this->file = new File($path);
+        }
         return $this->file;
     }
-
     /**
      * @param File $file
      * @return FxFile
@@ -175,5 +182,19 @@ class FxFile
         $this->extension = $extension;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'realFilename' => $this->getRealFilename(),
+            'filename' => $this->getFilename(),
+            'mimeType' => $this->getMimeType(),
+            'size' => $this->getSize(),
+            'extension' => $this->getExtension()
+        );
     }
 }

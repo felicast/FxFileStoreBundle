@@ -50,8 +50,8 @@ class FxFileType extends JsonArrayType
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         $value = parent::convertToPHPValue($value, $platform);
-        if ($value === null) {
-            return $value;
+        if (($value === null) || (!isset($value['realFilename']))) {
+            return null;
         }
         $filePath = $this->uploader->getPath($value['realFilename']);
         return new FxFile($filePath, $value);

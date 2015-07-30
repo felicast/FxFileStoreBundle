@@ -12,6 +12,8 @@ services:
 
     fx_file_store.form.fx_file_type:
         class: Felicast\Bundle\FxFileStoreBundle\Form\FxFileType
+        arguments:
+            - @fx_file_store.uploader
         tags:
             - { name: form.type, alias: fx_file }
 

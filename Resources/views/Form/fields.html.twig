@@ -1,0 +1,16 @@
+{% block fx_file_widget %}
+    {% spaceless %}
+        {% set attr = attr|merge({
+            'class': attr.class|default('') ~ ' form-control'
+        }) %}
+        {% set meta_full_name = full_name ~ '[meta]' %}
+        {% set full_name = full_name ~ '[file]' %}
+        {% set required = false %}
+        <input type="file" {{ block('widget_attributes') }}/>
+        <input type="hidden"
+               id="{{ id }}_meta"
+               name="{{ meta_full_name }}"
+                {% if form.vars.meta is not empty %}value="{{ form.vars.meta|json_encode }}"{% endif %}>
+        <img style="max-width: 100px" src="{% if form.vars.meta is not empty %}{{ fx_file_url(form.vars.meta) }}{% endif %}">
+    {% endspaceless %}
+{% endblock fx_file_widget %}

@@ -22,14 +22,20 @@ class FxFileStoreExtension extends \Twig_Extension
         );
     }
 
-    public function fileUrl(FxFile $file)
+    public function fileUrl($file)
     {
-        return $this->uploader->getUrl($file->getRealFilename());
+        return $this->uploader->getUrl($file);
     }
 
-    public function imageThumbnailUrl(FxFile $file, $width = 0, $height = 0)
+    /**
+     * @param FxFile|string $file
+     * @param int $width
+     * @param int $height
+     * @return string
+     */
+    public function imageThumbnailUrl($file, $width = 0, $height = 0)
     {
-        return $this->uploader->getImageThumbnailUrl($file->getRealFilename(), $width, $height);
+        return $this->uploader->getImageThumbnailUrl($file, $width, $height);
     }
 
     public function getName()

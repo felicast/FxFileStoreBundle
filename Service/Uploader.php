@@ -31,6 +31,19 @@ class Uploader
         }
     }
 
+    private function normalizeFilename($filenameOrFile)
+    {
+        $filename = null;
+        if ($filenameOrFile instanceof FxFile) {
+            $filename = $filenameOrFile->getRealFilename();
+        } elseif (is_array($filenameOrFile) && isset($filenameOrFile['realFilename'])) {
+            $filename = $filenameOrFile['realFilename'];
+        } elseif (is_string($filenameOrFile)) {
+            $filename = $filenameOrFile;
+        }
+        return $filename;
+    }
+
     public function getUploadDir()
     {
         return isset($this->mappings['upload_dir']) ? $this->mappings['upload_dir'] : 'upload';
@@ -49,13 +62,23 @@ class Uploader
         return isset($this->mappings['upload_path']) ? $this->mappings['upload_path'] : '/upload';
     }
 
-    public function getPath($filename)
+    public function getPath($filenameOrFile)
     {
+        $filename = $this->normalizeFilename($filenameOrFile);
+        if (!is_string($filename)) {
+            return null;
+        }
+
         return $this->getUploadDir() . DIRECTORY_SEPARATOR . $filename;
     }
 
-    public function getImageThumbnailPath($filename, $width, $height)
+    public function getImageThumbnailPath($filenameOrFile, $width, $height)
     {
+        $filename = $this->normalizeFilename($filenameOrFile);
+        if (!is_string($filename)) {
+            return null;
+        }
+
         $directory = $this->getUploadDir() . DIRECTORY_SEPARATOR . $this->getThumbnailDir($width, $height);
         if (!is_dir($directory) && @mkdir($directory, 0777, true) === false) {
             throw new FileException(sprintf('Unable to create the "%s" directory', $directory));
@@ -63,13 +86,23 @@ class Uploader
         return $directory . DIRECTORY_SEPARATOR . $filename;
     }
 
-    public function getUrl($filename)
+    public function getUrl($filenameOrFile)
     {
+        $filename = $this->normalizeFilename($filenameOrFile);
+        if (!is_string($filename)) {
+            return null;
+        }
+
         return $this->getUrlBase() . '/' . $filename;
     }
 
-    public function getImageThumbnailUrl($filename, $width = 0, $height = 0)
+    public function getImageThumbnailUrl($filenameOrFile, $width = 0, $height = 0)
     {
+        $filename = $this->normalizeFilename($filenameOrFile);
+        if (!is_string($filename)) {
+            return null;
+        }
+
         $width = max((int)($width), 0);
         $height = max((int)($height), 0);
 
@@ -78,25 +111,29 @@ class Uploader
         }
         $filePath = $this->getImageThumbnailPath($filename, $width, $height);
         if (!file_exists($filePath)) {
-            $thumb = new \Imagick($this->getPath($filename));
-            $newWidth = $width;
-            $newHeight = $height;
-            if ($newWidth === 0) {
-                $originalWidth = $thumb->getImageWidth();
-                $originalHeight = $thumb->getImageHeight();
-                $ratio = $originalHeight / $newHeight;
-                $newWidth = $originalWidth / $ratio;
-            }
-            if ($newHeight === 0) {
-                $originalWidth = $thumb->getImageWidth();
-                $originalHeight = $thumb->getImageHeight();
-                $ratio = $originalWidth / $newWidth;
-                $newHeight = $originalHeight / $ratio;
-            }
-            $thumb->cropThumbnailImage($newWidth, $newHeight);
+            try {
+                $thumb = new \Imagick($this->getPath($filename));
+                $newWidth = $width;
+                $newHeight = $height;
+                if ($newWidth === 0) {
+                    $originalWidth = $thumb->getImageWidth();
+                    $originalHeight = $thumb->getImageHeight();
+                    $ratio = $originalHeight / $newHeight;
+                    $newWidth = $originalWidth / $ratio;
+                }
+                if ($newHeight === 0) {
+                    $originalWidth = $thumb->getImageWidth();
+                    $originalHeight = $thumb->getImageHeight();
+                    $ratio = $originalWidth / $newWidth;
+                    $newHeight = $originalHeight / $ratio;
+                }
+                $thumb->cropThumbnailImage($newWidth, $newHeight);
 
-            $thumb->writeImage($filePath);
-            $thumb->destroy();
+                $thumb->writeImage($filePath);
+                $thumb->destroy();
+            } catch (\Exception $e) {
+
+            }
         }
 
         return $this->getUrlBase() . '/' . $this->getThumbnailDir($width, $height) . '/' . $filename;

@@ -3,6 +3,8 @@
 namespace Felicast\Bundle\FxFileStoreBundle\Form;
 
 use Felicast\Bundle\FxFileStoreBundle\Form\DataTransformer\FxFileDataTransformer;
+use Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File\FxFile;
+use Felicast\Bundle\FxFileStoreBundle\Service\Uploader;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,26 +15,20 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FxFileType extends AbstractType
 {
+    /** @var Uploader */
+    private $uploader;
+
+    public function __construct(Uploader $uploader)
+    {
+        $this->uploader = $uploader;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new FxFileDataTransformer());
-
-//        $builder->addEventListener(
-//            FormEvents::PRE_SUBMIT,
-//            function (FormEvent $formEvent) {
-//                $data = $formEvent->getData();
-//                if (is_string($data)) {
-//                    $meta = json_decode($data, true);
-//                    if ($meta && isset($meta['type']) && isset($meta['realFilename'])) {
-//                        $data = new MFile(null, $this->uploader->getPath($meta['type'], $meta['realFilename']), $meta);
-//                        $formEvent->setData($data);
-//                    }
-//                }
-//            }
-//        );
+        $builder->addModelTransformer(new FxFileDataTransformer($this->uploader));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -55,6 +51,22 @@ class FxFileType extends AbstractType
         if ($options['multiple']) {
             $view->vars['full_name'] .= '[]';
             $view->vars['attr']['multiple'] = 'multiple';
+        }
+        if (isset($view->vars['value'])) {
+            $meta = null;
+            $value = $form->getData();
+            if (!($value instanceof FxFile)) {
+                $value = $view->vars['value'];
+            }
+            if ($value instanceof FxFile) {
+                $meta = json_encode($value);
+            } elseif (isset($value['meta'])) {
+                $meta = $value['meta'];
+            }
+            if (is_string($meta)) {
+                $meta = json_decode($meta, true);
+            }
+            $view->vars['meta'] = $meta;
         }
 
         $view->vars = array_replace(
