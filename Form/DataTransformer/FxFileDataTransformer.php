@@ -4,7 +4,7 @@
 namespace Felicast\Bundle\FxFileStoreBundle\Form\DataTransformer;
 
 use Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File\FxFile;
-use Felicast\Bundle\FxFileStoreBundle\Service\Uploader;
+use Felicast\Bundle\FxFileStoreBundle\Service\AssetsManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -12,11 +12,11 @@ use Symfony\Component\HttpFoundation\File\File;
 class FxFileDataTransformer implements DataTransformerInterface
 {
     /**
-     * @var Uploader
+     * @var AssetsManager
      */
     private $uploader;
 
-    public function __construct(Uploader $uploader)
+    public function __construct(AssetsManager $uploader)
     {
         $this->uploader = $uploader;
     }

@@ -6,15 +6,15 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Felicast\Bundle\FxFileStoreBundle\Doctrine\DBAL\Types\FxFileType;
-use Felicast\Bundle\FxFileStoreBundle\Service\Uploader;
+use Felicast\Bundle\FxFileStoreBundle\Service\AssetsManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UploadableListener implements EventSubscriber
 {
-    /** @var Uploader */
+    /** @var AssetsManager */
     private $uploader;
 
-    public function __construct(ContainerInterface $container, Uploader $uploader)
+    public function __construct(ContainerInterface $container, AssetsManager $uploader)
     {
         $this->uploader = $uploader;
     }

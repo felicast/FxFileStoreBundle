@@ -6,7 +6,7 @@ namespace Felicast\Bundle\FxFileStoreBundle\Doctrine\DBAL\Types;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonArrayType;
 use Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File\FxFile;
-use Felicast\Bundle\FxFileStoreBundle\Service\Uploader;
+use Felicast\Bundle\FxFileStoreBundle\Service\AssetsManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FxFileType extends JsonArrayType
@@ -14,7 +14,7 @@ class FxFileType extends JsonArrayType
     const FX_FILE = 'fx_file';
 
     /**
-     * @var Uploader
+     * @var AssetsManager
      */
     private $uploader;
 
@@ -65,7 +65,7 @@ class FxFileType extends JsonArrayType
         return self::FX_FILE;
     }
 
-    public function setUploder(Uploader $uploader)
+    public function setUploder(AssetsManager $uploader)
     {
         $this->uploader = $uploader;
 

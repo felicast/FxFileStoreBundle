@@ -6,25 +6,25 @@ services:
         class: Felicast\Bundle\FxFileStoreBundle\Doctrine\ORM\EventListener\UploadableListener
         arguments:
             - @service_container
-            - @fx_file_store.uploader
+            - @fx_file_store.assets_manager
         tags:
             - { name: doctrine.event_subscriber }
 
     fx_file_store.form.fx_file_type:
         class: Felicast\Bundle\FxFileStoreBundle\Form\FxFileType
         arguments:
-            - @fx_file_store.uploader
+            - @fx_file_store.assets_manager
         tags:
             - { name: form.type, alias: fx_file }
 
-    fx_file_store.uploader:
-        class: Felicast\Bundle\FxFileStoreBundle\Service\Uploader
+    fx_file_store.assets_manager:
+        class: Felicast\Bundle\FxFileStoreBundle\Service\AssetsManager
         arguments:
             - %fx_file_store.mappings%
 
     fx_file_store.twig.fx_file_store:
         class: Felicast\Bundle\FxFileStoreBundle\Twig\FxFileStoreExtension
         arguments:
-            - @fx_file_store.uploader
+            - @fx_file_store.assets_manager
         tags:
             - { name: twig.extension }

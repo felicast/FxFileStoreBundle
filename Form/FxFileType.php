@@ -4,7 +4,7 @@ namespace Felicast\Bundle\FxFileStoreBundle\Form;
 
 use Felicast\Bundle\FxFileStoreBundle\Form\DataTransformer\FxFileDataTransformer;
 use Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File\FxFile;
-use Felicast\Bundle\FxFileStoreBundle\Service\Uploader;
+use Felicast\Bundle\FxFileStoreBundle\Service\AssetsManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -15,10 +15,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FxFileType extends AbstractType
 {
-    /** @var Uploader */
+    /** @var AssetsManager */
     private $uploader;
 
-    public function __construct(Uploader $uploader)
+    public function __construct(AssetsManager $uploader)
     {
         $this->uploader = $uploader;
     }

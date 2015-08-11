@@ -4,11 +4,17 @@ namespace Felicast\Bundle\FxFileStoreBundle\Service;
 
 use Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File\FxFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class Uploader
+class AssetsManager
 {
     private $mappings;
+
+    private function generateFileName(File $file, $extension)
+    {
+        return sha1_file($file->getPathname()) . '.' . $extension;
+    }
 
     public function __construct($mappings)
     {
@@ -20,7 +26,7 @@ class Uploader
         $realFile = $file->getFile();
         if ($realFile instanceof UploadedFile) {
             $fileDir = $this->getUploadDir();
-            $fileName = sha1_file($realFile->getPathname()) . '.' . $realFile->getClientOriginalExtension();
+            $fileName = $this->generateFileName($realFile, $realFile->getClientOriginalExtension());
             $newFile = $realFile->move($fileDir, $fileName);
             $file->setFile($newFile);
 
@@ -137,5 +143,28 @@ class Uploader
         }
 
         return $this->getUrlBase() . '/' . $this->getThumbnailDir($width, $height) . '/' . $filename;
+    }
+
+    /**
+     * @param $fileUrl
+     * @return FxFile
+     */
+    public function uploadFileFromRemoteServer($fileUrl)
+    {
+        $tempFileName = tempnam(sys_get_temp_dir(), 'fxUpload');
+        if (copy($fileUrl, $tempFileName) === false) {
+            $errors = error_get_last();
+            throw new \RuntimeException("Can not copy file from $fileUrl to $tempFileName : {$errors['message']}");
+        }
+        $realFile = new File($tempFileName);
+        $newFileName = $this->generateFileName($realFile, pathinfo($fileUrl, PATHINFO_EXTENSION));
+        $newPath = $this->getPath($newFileName);
+        if (!file_exists($newPath)) {
+            if (rename($tempFileName, $newPath) === false) {
+                $errors = error_get_last();
+                throw new \RuntimeException("Can not move file from $tempFileName to $newPath : {$errors['message']}");
+            }
+        }
+        return new FxFile($newPath);
     }
 }

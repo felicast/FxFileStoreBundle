@@ -3,13 +3,13 @@
 namespace Felicast\Bundle\FxFileStoreBundle\Twig;
 
 use Felicast\Bundle\FxFileStoreBundle\HttpFoundation\File\FxFile;
-use Felicast\Bundle\FxFileStoreBundle\Service\Uploader;
+use Felicast\Bundle\FxFileStoreBundle\Service\AssetsManager;
 
 class FxFileStoreExtension extends \Twig_Extension
 {
     private $uploader;
 
-    public function __construct(Uploader $uploader)
+    public function __construct(AssetsManager $uploader)
     {
         $this->uploader = $uploader;
     }
