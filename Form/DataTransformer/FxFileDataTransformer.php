@@ -36,6 +36,6 @@ class FxFileDataTransformer implements DataTransformerInterface
                 return new FxFile($this->uploader->getPath($meta['realFilename']));
             }
         }
-        throw new \InvalidArgumentException('Must be File or FxFile');
+        return null;
     }
 }
