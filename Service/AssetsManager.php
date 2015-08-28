@@ -37,6 +37,15 @@ class AssetsManager
         }
     }
 
+    public function move(File $file)
+    {
+        $fileDir = $this->getUploadDir();
+        $fileName = $this->generateFileName($file, $file->getExtension());
+        $newFile = $file->move($fileDir, $fileName);
+        return new FxFile($newFile);
+    }
+
+
     private function normalizeFilename($filenameOrFile)
     {
         $filename = null;
