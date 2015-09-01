@@ -144,6 +144,10 @@ class AssetsManager
                 }
                 $thumb->cropThumbnailImage($newWidth, $newHeight);
 
+                if (($thumb->getImageWidth() !== $width) || ($thumb->getImageHeight() !== $height)) {
+                    $thumb->resizeImage($width, $height, \Imagick::FILTER_POINT, 0);
+                }
+
                 $thumb->writeImage($filePath);
                 $thumb->destroy();
             } catch (\Exception $e) {
